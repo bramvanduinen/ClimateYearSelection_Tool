@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Optional, Sequence
-
+from pydantic import BaseModel
 import pandas as pd
 
 from climate_year_selection_tool.sa import run_sa_parallel
@@ -22,8 +22,8 @@ _SCORING_FNS = {
 # %% Result type
 
 
-@dataclass
-class SelectionResult:
+
+class SelectionResult(BaseModel):
     """
     Result of a `select_years` run.
 

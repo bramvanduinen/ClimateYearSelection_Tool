@@ -11,6 +11,8 @@ dependencies = [
     "tqdm>=4.6",
     "pyarrow",
     "fastparquet",
+    "pydantic>=2.12.5",
+    "loguru>=0.7.3",
 ]
 
 [project.optional-dependencies]
