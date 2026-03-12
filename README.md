@@ -191,5 +191,5 @@ climate_year_selection_tool/
 | `fastparquet` | Parquet I/O support |
 
 ## Contact
-Developed by: Bram van Duinen
+Developed by: Bram van Duinen  
 Contact: bram.van.duinen@knmi.nl
