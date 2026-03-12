@@ -32,6 +32,9 @@ VARIABLES = ["temp", "wind", "solar"]
 # Define seasons for seasonal scoring
 SEASONS = {"Winter": [10, 11, 12, 1, 2, 3], "Summer": [4, 5, 6, 7, 8, 9]}
 
+# ── load ─────────────────────────────────────────────────────────────────────
+df = pd.read_csv(DATA_FILE, parse_dates=["Date"])
+
 # Results folder: results/all_example_usages/<timestamp>/
 RESULTS_DIR = (
     Path(__file__).parent.parent
@@ -42,8 +45,6 @@ RESULTS_DIR = (
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-# ── load ─────────────────────────────────────────────────────────────────────
-df = pd.read_csv(DATA_FILE, parse_dates=["Date"])
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
