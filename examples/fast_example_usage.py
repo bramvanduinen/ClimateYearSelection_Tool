@@ -10,6 +10,7 @@ Or from anywhere:
 """
 # %%
 
+import datetime
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ import pandas as pd
 # Add src/ to the path so the package is importable without installation
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from climate_year_selection_tool import add_custom_year, select_years
+from climate_year_selection_tool import add_custom_year, save_result, select_years
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Setup: define data file, variables, seasons
@@ -30,6 +31,15 @@ DATA_FILE = Path(__file__).parent.parent / "data" / "synthetic_climate_data.csv"
 VARIABLES = ["temp", "wind", "solar"]
 # Define seasons for seasonal scoring
 SEASONS = {"Winter": [10, 11, 12, 1, 2, 3], "Summer": [4, 5, 6, 7, 8, 9]}
+
+# Results folder: results/all_example_usages/<timestamp>/
+RESULTS_DIR = (
+    Path(__file__).parent.parent
+    / "results"
+    / "all_example_usages"
+    / datetime.now().strftime("%Y%m%d_%H%M%S")
+)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── load ─────────────────────────────────────────────────────────────────────
 df = pd.read_csv(DATA_FILE, parse_dates=["Date"])
@@ -61,6 +71,21 @@ print(f"Log rows       : {len(result.log_df)}")
 print(f"Num experiments: {len(result.all_runs)}")
 print(f"All scores     : {[round(r['score'], 6) for r in result.all_runs]}")
 
+save_result(
+    result,
+    "exp1",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.8,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "year",
+    },
+    RESULTS_DIR,
+)
+
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
 # 2. Single-model, hydrological year starting April 1
@@ -83,6 +108,21 @@ result_hydro = select_years(
 
 print(f"Selected years : {result_hydro.selected}")
 print(f"Best score     : {result_hydro.score:.6f}")
+
+save_result(
+    result_hydro,
+    "exp2",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.9,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "hydro_year",
+    },
+    RESULTS_DIR,
+)
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────

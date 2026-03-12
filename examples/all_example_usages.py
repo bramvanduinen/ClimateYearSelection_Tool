@@ -72,11 +72,20 @@ print(f"Log rows       : {len(result.log_df)}")
 print(f"Num experiments: {len(result.all_runs)}")
 print(f"All scores     : {[round(r['score'], 6) for r in result.all_runs]}")
 
-save_result(result, "exp1", {
-    "n_select": 5, "scoring": "seasonal_wasserstein", "n_experiments": 5,
-    "cooling_rate": 0.8, "max_iter": 2_000, "random_state": 42,
-    "year_col": "year",
-}, RESULTS_DIR)
+save_result(
+    result,
+    "exp1",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.8,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "year",
+    },
+    RESULTS_DIR,
+)
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
@@ -101,11 +110,20 @@ result_hydro = select_years(
 print(f"Selected {result_hydro.year_col}s : {result_hydro.selected}")
 print(f"Best score     : {result_hydro.score:.6f}")
 
-save_result(result_hydro, "exp2", {
-    "n_select": 5, "scoring": "seasonal_wasserstein", "n_experiments": 5,
-    "cooling_rate": 0.9, "max_iter": 2_000, "random_state": 42,
-    "year_col": "hydro_year",
-}, RESULTS_DIR)
+save_result(
+    result_hydro,
+    "exp2",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.9,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "hydro_year",
+    },
+    RESULTS_DIR,
+)
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
@@ -120,6 +138,7 @@ result_annual = select_years(
     year_col="year",
     scoring="wasserstein",
     n_experiments=5,
+    cooling_rate=0.8,
     max_iter=2_000,
     random_state=42,
 )
@@ -127,11 +146,20 @@ result_annual = select_years(
 print(f"Selected {result_annual.year_col}s : {result_annual.selected}")
 print(f"Best score     : {result_annual.score:.6f}")
 
-save_result(result_annual, "exp3", {
-    "n_select": 5, "scoring": "wasserstein", "n_experiments": 5,
-    "cooling_rate": 0.9975, "max_iter": 2_000, "random_state": 42,
-    "year_col": "year",
-}, RESULTS_DIR)
+save_result(
+    result_annual,
+    "exp3",
+    {
+        "n_select": 5,
+        "scoring": "wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.8,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "year",
+    },
+    RESULTS_DIR,
+)
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
@@ -158,11 +186,21 @@ result_multi = select_years(
 print(f"Selected (model, year): {result_multi.selected}")
 print(f"Best score            : {result_multi.score:.6f}")
 
-save_result(result_multi, "exp4", {
-    "n_select": 5, "scoring": "seasonal_wasserstein", "n_experiments": 5,
-    "cooling_rate": 0.8, "max_iter": 2_000, "random_state": 42,
-    "year_col": "year", "model_col": "model",
-}, RESULTS_DIR)
+save_result(
+    result_multi,
+    "exp4",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.8,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "year",
+        "model_col": "model",
+    },
+    RESULTS_DIR,
+)
 
 # %%
 # ─────────────────────────────────────────────────────────────────────────────
@@ -174,8 +212,18 @@ log = result.log_df
 print(log.columns.tolist())
 print(log[["iter", "temp", "score_best", "acc_rate"]].tail(5).to_string(index=False))
 
-save_result(result, "exp5", {
-    "n_select": 5, "scoring": "seasonal_wasserstein", "n_experiments": 5,
-    "cooling_rate": 0.8, "max_iter": 2_000, "random_state": 42,
-    "year_col": "year", "note": "convergence_log_inspection",
-}, RESULTS_DIR)
+save_result(
+    result,
+    "exp5",
+    {
+        "n_select": 5,
+        "scoring": "seasonal_wasserstein",
+        "n_experiments": 5,
+        "cooling_rate": 0.8,
+        "max_iter": 2_000,
+        "random_state": 42,
+        "year_col": "year",
+        "note": "convergence_log_inspection",
+    },
+    RESULTS_DIR,
+)
