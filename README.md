@@ -178,11 +178,12 @@ climate_year_selection_tool/
 │   ├── scores.py        # Wasserstein scoring functions
 │   └── io.py            # save_result() utilities
 ├── examples/
-│   ├── make_synthetic_data.py   # generate test data
+│   ├── make_synthetic_data.py   # generate test data (optional)
 │   └── example_usage.ipynb   # notebook with example for simple use-cases
 ├── experiments/         # perform your experiments here
 ├── data/                # put your input data here
-├── results/             # experiment results
+│   └── synthetic_climate_data.csv   # synthetic data for running the examples
+├── results/             # experiment results get saved here
 ├── pyproject.toml
 └── requirements.txt
 ```
