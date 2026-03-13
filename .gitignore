@@ -28,7 +28,7 @@ htmlcov/
 
 # Data files (folder tracked via .gitkeep)
 data/*
-!data/synethtic_climate_data.csv
+!data/synthetic_climate_data.csv
 !data/.gitkeep
 
 # Experiments
