@@ -16,7 +16,8 @@ The search runs multiple independent experiments in parallel (with different ran
 The package is not yet on PyPI. Clone the repository and install using one of these options:
 
 ```bash
-# Option A (recommended): install in editable mode — makes the package importable everywhere
+# Option A (recommended): install in editable mode, makes the package importable everywhere
+# Uses pyprojec.toml
 pip install -e .
 
 # Option B: install only the dependencies, then add src/ to your Python path manually

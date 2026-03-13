@@ -1,9 +1,18 @@
+from functools import partial
 from typing import Callable, Optional, Sequence, Tuple, TypedDict
 
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
+from ot.sliced import get_random_projections
 from tqdm import tqdm
+
+from climate_year_selection_tool.scores import (
+    build_references,
+    build_season_references,
+    wasserstein_score,
+    wasserstein_seasonal_score,
+)
 
 # %% TypedDicts for worker args / results
 
@@ -230,10 +239,11 @@ def run_sa_parallel(
     temp_end: float,
     cooling_rate: float,
     max_iter: int,
-    precision_boost: bool,
+    precision_boost: bool,  # disabled for now, doesn't work with fast scoring
     n_experiments: int,
     base_seed: int,
     n_workers: Optional[int],
+    n_projections: int = 50,
 ) -> list[SAResult]:
     """
     Run n_experiments SA instances in parallel with different random seeds.
@@ -253,6 +263,33 @@ def run_sa_parallel(
     DataFrames consider reducing n_experiments or pre-filtering variables.
     """
     seeds = [base_seed + i for i in range(n_experiments)]
+
+    # Unwrap partial to get the base function for identity checks.
+    _base_fn = getattr(scoring_fn, "func", scoring_fn)
+
+    if _base_fn is wasserstein_seasonal_score:
+        # Pre-compute fixed reference projections for fast Wasserstein variants.
+        projections = get_random_projections(
+            len(variables), n_projections, seed=42
+        ).astype(np.float32)
+        seasons = getattr(scoring_fn, "keywords", {}).get("seasons", None)
+        refs = build_season_references(df, variables, projections, seasons=seasons)
+        scoring_fn = partial(
+            wasserstein_seasonal_score,
+            season_refs=refs,
+            projections=projections,
+            seasons=seasons,
+        )
+    elif _base_fn is wasserstein_score:
+        # Pre-compute fixed reference projections for fast Wasserstein variants.
+        projections = get_random_projections(
+            len(variables), n_projections, seed=42
+        ).astype(np.float32)
+        refs = build_references(df, variables, projections)
+        scoring_fn = partial(
+            wasserstein_score, ref_proj_sorted=refs, projections=projections
+        )
+
     common: dict = dict(
         df=df,
         variables=variables,
@@ -264,7 +301,7 @@ def run_sa_parallel(
         temp_end=temp_end,
         cooling_rate=cooling_rate,
         max_iter=max_iter,
-        precision_boost=precision_boost,
+        precision_boost=False,  # disabled: fast scoring uses fixed projections, incompatible with precision_boost
     )
     args_list: list[_SAArgs] = [{**common, "seed": seed} for seed in seeds]
 
@@ -282,7 +319,7 @@ def run_sa_parallel(
             cooling_rate=cooling_rate,
             max_iter=max_iter,
             random_state=seeds[0],
-            precision_boost=precision_boost,
+            precision_boost=False,  # disabled for now, doesn't work with fast-SSWD
             verbose=True,
         )
         return [

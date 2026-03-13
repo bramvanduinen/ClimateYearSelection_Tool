@@ -7,7 +7,9 @@ import pandas as pd
 from climate_year_selection_tool.sa import run_sa_parallel
 from climate_year_selection_tool.scores import (
     wasserstein_score,
+    wasserstein_score_pot,
     wasserstein_seasonal_score,
+    wasserstein_seasonal_score_pot,
 )
 
 _DUMMY_MODEL_COL = "_model"
@@ -15,7 +17,9 @@ _DUMMY_MODEL_VAL = "model"
 
 _SCORING_FNS = {
     "wasserstein": wasserstein_score,
+    "wasserstein_pot": wasserstein_score_pot,  # legacy, slower version
     "seasonal_wasserstein": wasserstein_seasonal_score,
+    "seasonal_wasserstein_pot": wasserstein_seasonal_score_pot,  # legacy, slower version
 }
 
 
@@ -107,6 +111,7 @@ def select_years(
     n_workers: Optional[int] = None,
     random_state: int = 42,
     precision_boost: bool = True,
+    n_projections: int = 50,
 ) -> SelectionResult:
     """
     Select representative years from a climate dataset using simulated annealing.
@@ -138,13 +143,21 @@ def select_years(
     scoring : scoring metric to minimise. Options:
 
               ``"seasonal_wasserstein"`` (default)
-                  Seasonal max of sliced Wasserstein distance. Computes the
-                  distance separately for Winter (Oct–Mar) and Summer (Apr–Sep)
-                  and returns the maximum, ensuring representativeness in both
-                  seasons.
+                  Seasonal max of sliced Wasserstein distance (slow, POT-based).
+                  Calculates the score separately for each season and takes the maximum, to
+                  ensure good representativeness across seasons.
+
+              ``"seasonal_wasserstein_fast"``
+                  Same as above but uses pre-computed fixed projections for the reference.
+                  Faster in iterative optimisation; recommended for most cases.
 
               ``"wasserstein"``
-                  Sliced Wasserstein distance over the full annual distribution.
+                  Sliced Wasserstein distance over the full annual distribution
+                  (slow, POT-based).
+
+              ``"wasserstein_fast"``
+                  Same as above but uses pre-computed fixed projections for the reference.
+                  Faster in iterative optimisation.
 
     seasons : custom season definitions for ``"seasonal_wasserstein"`` scoring.
               A dict mapping season names to lists of month numbers (1–12).
@@ -170,6 +183,10 @@ def select_years(
                       re-evaluated with n_projections=200 for higher accuracy.
                       Set False only when using a custom scoring function that
                       does not accept an ``n_projections`` keyword argument.
+    n_projections : number of random 1-D projections used for the sliced
+                    Wasserstein distance. Higher values increase accuracy but
+                    also runtime. 50 is a good default; use 200 for
+                    publication-quality results.
 
     Returns
     -------
@@ -232,6 +249,7 @@ def select_years(
         n_experiments=n_experiments,
         base_seed=random_state,
         n_workers=n_workers,
+        n_projections=n_projections,
     )
 
     best = all_runs[0]  # sorted ascending by score
