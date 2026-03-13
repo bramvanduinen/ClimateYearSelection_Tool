@@ -13,7 +13,6 @@ build/
 
 # Jupyter / interactive
 .ipynb_checkpoints/
-*.ipynb
 
 # Test & coverage
 .pytest_cache/
@@ -29,7 +28,7 @@ htmlcov/
 
 # Data files (folder tracked via .gitkeep)
 data/*
-!data/era5_wind_100m_nl_daily.csv
+!data/synethtic_climate_data.csv
 !data/.gitkeep
 
 # Experiments
@@ -39,6 +38,9 @@ experiments/*
 # Results
 results/*
 !results/.gitkeep
+
+# Old examples
+/examples/old/
 
 # Tests
 tests/

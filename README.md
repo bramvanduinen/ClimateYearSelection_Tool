@@ -148,15 +148,17 @@ for run in result.all_runs:
 ## Running the examples
 
 ```bash
-# Generate synthetic data first
+# (optional) Generate synthetic data. Also already provided in data/synthetic_climate_data.csv
 python examples/make_synthetic_data.py
-
-# Run all five example use cases
-python examples/all_example_usages.py
-
-# Or run the quick single-experiment example
-python examples/fast_example_usage.py
 ```
+
+Then open the interactive example notebook:
+
+```
+examples/example_usage.ipynb
+```
+
+It walks through several use cases step by step: basic year selection, hydrological years, multi-model datasets, and inspecting results.
 
 ## Project structure
 
@@ -170,8 +172,7 @@ climate_year_selection_tool/
 │   └── io.py            # save_result() utilities
 ├── examples/
 │   ├── make_synthetic_data.py   # generate test data
-│   ├── all_example_usages.py   # runnable examples
-│   └── fast_example_usage.py   # quick single-experiment example
+│   └── example_usage.ipynb   # notebook with example for simple use-cases
 ├── experiments/         # perform your experiments here
 ├── data/                # put your input data here
 ├── results/             # experiment results
