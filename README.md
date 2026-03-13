@@ -1,15 +1,22 @@
 # Climate Year Selection Tool
 
-Select a small set of **representative years** from a climate dataset. The selected years collectively match the statistical distribution of the full dataset as closely as possible, across all your chosen variables and potentially in multiple seasons.
+
+
+Select a small subset of **representative climate years** from a larger climate dataset for usage in a downstream (e.g. impact) model or analysis that is too computationally expensive to run on the full dataset. The selected years collectively match the statistical distribution of the full dataset as closely as possible, across all your chosen variables and potentially in multiple seasons.
 
 > **Note:** This project is a work in progress.
 
-
 ## How it works
 
-The tool uses **simulated annealing** to search for the best subset of years. Each candidate subset is scored using the **sliced Wasserstein distance**, an optimal-transport metric that measures how well the joint-distribution of the selected years matches the full climatological joint-distribution of the reference. Lower score = more representative selection.
+**Climate year selection** is the problem of finding a small subset of years from a larger climate dataset that is as statistically representative as possible of the full dataset. The subset should preserve not just average conditions but also variability, extremes, and correlations between variables. Climate year selection is required whenever a downstream (e.g. impact) model or analysis is too computationally expensive to run on the full dataset.
 
-The search runs multiple independent experiments in parallel (with different random seeds) and returns the best result found.
+Finding the optimal subset is a combinatorial problem with [combinatorial explosion](https://en.wikipedia.org/wiki/Combinatorial_explosion). Exhaustive search is infeasible for any realistic dataset size, so a smart search strategy is needed.
+
+This tool uses **[simulated annealing (SA)](https://towardsdatascience.com/an-introduction-to-a-powerful-optimization-technique-simulated-annealing-87fd1e3676dd/)**, a stochastic optimisation algorithm that starts from a random subset and iteratively proposes small changes (swapping years in and out). Improvements are always accepted; slightly worse solutions are accepted with a decreasing probability as the search progresses. This allows the algorithm to escape local minima early on while converging reliably over time. Multiple independent runs are launched in parallel and the best result is returned.
+
+Each candidate subset is scored using the (sliced) **[ Wasserstein distance](https://en.wikipedia.org/wiki/Wasserstein_metric)**, an optimal-transport metric that measures how well the subset reproduces the full multivariate distribution of the reference dataset. Lower score = more representative selection.
+
+This tool is based on [van Duinen et al. (in prep.)]() — *Selecting representative climate years for (national to continental-scale) energy system studies* — which compares several climate year selection methods for application in energy system studies and finds simulated annealing superior across subset sizes and spatial domains. This tool is generalized to work for any application.
 
 ## Installation
 
