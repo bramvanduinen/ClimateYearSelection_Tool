@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from loguru import logger
 
 OUTPUT_FILE = Path(__file__).parent.parent / "data" / "synthetic_climate_data.csv"
 
@@ -68,6 +69,6 @@ solar = np.clip(
 
 df = pd.DataFrame({"Date": dates, "temp": temp, "wind": wind, "solar": solar})
 df.to_csv(OUTPUT_FILE, index=False)
-print(f"Saved {len(df):,} rows to {OUTPUT_FILE}")
-print(df.head())
-print(df.describe().round(3))
+logger.info((f"Saved {len(df):,} rows to {OUTPUT_FILE}"))
+logger.info(df.head())
+logger.info(df.describe().round(3))
